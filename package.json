@@ -1,0 +1,25 @@
+{
+  "name": "@livingdocs/github-create-downstream-release-branch",
+  "version": "0.0.0-development",
+  "description": "",
+  "main": "index.js",
+  "bin": "./cli.js",
+  "author": "Ralph Meier",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "request": "^2.88.0",
+    "request-promise": "^4.2.5",
+    "semver": "^7.5.4",
+    "yargs": "^12.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-plugin-jsdoc": "^48.0.2"
+  }
+}

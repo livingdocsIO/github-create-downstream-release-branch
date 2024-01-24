@@ -39,6 +39,9 @@ const getTag = async ({repo, owner, token, tag}) => {
 module.exports = async ({owner, repo, ghToken, branch, tag}) => {
   const token = ghToken
   const baseTagCommit = tag
+    // getTag doesn't work properly yet
+    // because I always run into this error when trying to update package.json later:
+    // 409 - {"message":"package.json does not match b3bcc89acb64937c9bf76ef41429caecae03c825","documentation_url":"https://docs.github.com/rest/repos/contents#create-or-update-file-contents"}
     ? await getTag({repo, owner, token, tag})
     : await getHighestTag({repo, owner, token})
 
@@ -69,9 +72,6 @@ module.exports = async ({owner, repo, ghToken, branch, tag}) => {
 
   // add a new commit to the release-branch
   console.log('github-create-downstream-relase-branch: update package.json')
-  console.log('path', packageBase64Obj.path)
-  console.log('package sha', packageBase64Obj.sha)
-  console.log('baseTagCommit sha', baseTagCommit.sha)
   await updateContent({
     owner,
     repo,

@@ -5,6 +5,7 @@ const gitGetContent = require('./git/get-content')
 const updateContent = require('./git/update-content')
 const semver = require('semver')
 const gitCreateBranch = require('./git/create-branch')
+const createPullRequest = require('./git/create-pull-request')
 
 // @return {'tag': '1.0.1', 'sha': '1234'}
 const getHighestTag = async ({repo, owner, token}) => {
@@ -65,22 +66,49 @@ module.exports = async ({owner, repo, ghToken, branch, tag}) => {
   await gitCreateBranch({
     owner,
     repo,
+    token,
     ref: `refs/heads/${branch}`,
-    sha: baseTagCommit.sha,
-    token
+    sha: baseTagCommit.sha
   })
 
-  // add a new commit to the release-branch
+  // create PR branch
+  const branchName = `set-semantic-release-for-release-branch-${branch}`
+  console.log(`github-create-downstream-relase-branch: create release PR branch "${branchName}" based on tag "${baseTagCommit.tag}"`) // eslint-disable-line max-len
+  await gitCreateBranch({
+    owner,
+    repo,
+    token,
+    ref: `refs/heads/${branchName}`,
+    sha: baseTagCommit.sha
+  })
+
+  // add a new commit to the PR branch
   console.log('github-create-downstream-relase-branch: update package.json')
   await updateContent({
     owner,
     repo,
     token,
     path: packageBase64Obj.path,
-    message: `fix(release-management): extend package.json.release.branches with ${branch} for semantic release`, // eslint-disable-line max-len
+    message: `fix(release-management): add release branch ${branch} to package.json for semantic release`, // eslint-disable-line max-len
     content: updatedPackageBase64Obj,
     sha: packageBase64Obj.sha,
-    branch: branch
+    branch: branchName
   })
-  return {branch, url: `https://github.com/${owner}/${repo}/tree/${branch}`}
+
+  // create the bump pull request
+  const targetBranch = branch
+  const pullRequest = await createPullRequest({
+    owner,
+    repo,
+    token,
+    title: `Add Semantic Release Settings for Release Branch ${targetBranch}`,
+    head: branchName,
+    base: targetBranch,
+    body: `## Changelog
+
+- Add Semantic Release Settings for Release Branch ${targetBranch}
+    `
+  })
+
+  return {branch, url: `https://github.com/${owner}/${repo}/tree/${branch}`, pullRequest}
 }

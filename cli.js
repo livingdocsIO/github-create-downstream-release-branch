@@ -18,6 +18,7 @@ const run = require('./index')
 run(argv)
   .then((response) => {
     console.log(`The release branch ${response.url} has been created sucessfully.`) // eslint-disable-line max-len
+    console.log(`Pull Request ${response.pullRequest.html_url} has been created sucessfully.`) // eslint-disable-line max-len
   })
   .catch((e) => {
     console.log(e.message)

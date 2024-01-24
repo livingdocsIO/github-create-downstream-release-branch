@@ -4,7 +4,9 @@ A simple CLI command to create a release branch for Livingdocs Downstream projec
 
 #### Workflow
 - Create a release branch based on latest tag
+- Create a feature branch based on release branch
 - extend package.json.release.branches with information for semantic releases
+- Create PR from the feature branch to the release branch
 
 
 # Example

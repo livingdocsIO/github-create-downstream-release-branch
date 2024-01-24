@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>livingdocsIO/customer-solutions:renovate-msp-default.json5"],
+  "extends": ["local>livingdocsIO/customer-solutions:renovate-msp-default.json5"],
   "ignoreDeps": [],
   "baseBranches": ["main"],
   "packageRules": []

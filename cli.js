@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+'use strict'
+
 const argv = require('yargs')
   .demandOption(['gh-token', 'owner', 'repo'])
   .option('branch', {
@@ -7,12 +9,12 @@ const argv = require('yargs')
     demandOption: true
   })
   .option('tag', {
-    description: 'create release branch based from a tag, if option not passed, it takes the highest tag automatically', // eslint-disable-line max-len
+    description:
+      'create release branch based from a tag, if option not passed, it takes the highest tag automatically', // eslint-disable-line max-len
     type: 'string'
   })
   .help(false)
-  .version(false)
-  .argv
+  .version(false).argv
 const run = require('./index')
 
 run(argv)

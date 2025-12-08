@@ -1,21 +1,27 @@
-const request = require('request-promise')
+'use strict'
+
+const axios = require('axios')
 
 // https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#create-a-pull-request
-module.exports = async ({owner, repo, token, title, head, base, body}) => {
+module.exports = async ({owner, repo, token, title, head, base, body, debug}) => {
   try {
-    return request({
-      method: 'POST',
-      uri: `https://api.github.com/repos/${owner}/${repo}/pulls`,
-      body: {title, head, base, body},
-      headers: {
-        'Authorization': `token ${token}`,
-        'User-Agent': 'Request-Promise',
-        'X-GitHub-Api-Version': '2022-11-28'
-      },
-      json: true
-    })
+    const {data} = await axios.post(
+      `https://api.github.com/repos/${owner}/${repo}/pulls`,
+      {title, head, base, body},
+      {
+        headers: {
+          Authorization: `token ${token}`,
+          'User-Agent': 'Axios',
+          Accept: 'application/vnd.github.groot-preview+json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      }
+    )
+    if (debug) console.log('github-create-downstream-release-branch.create-pull-request()', data)
+    return data
   } catch (error) {
-    console.log('github-create-downstream-relase-branch.create-pull-request: failed')
+    console.error(error)
+    console.error('github-create-downstream-release-branch.create-pull-request: failed')
     throw error
   }
 }

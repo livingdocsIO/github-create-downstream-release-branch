@@ -1,0 +1,32 @@
+// (VSCode Plugin: HTTP Yac)
+// https://marketplace.visualstudio.com/items?itemName=anweber.vscode-httpyac
+//
+// Example Requests to GitHub
+// -------------------------------------------------------------
+
+// General Settings
+@repo = {{$input-askonce GitHub Repository Name? $value: livingdocs-npg}}
+@owner = {{$pick-askonce GitHub Owner? $value: livingdocsIO}}
+@token = {{$input-askonce GitHub Token? $value: your-token...}}
+
+### Get Tags
+
+GET https://api.github.com/repos/{{owner}}/{{repo}}/tags
+Content-Type: application/json
+Authorization: token {{token}}
+Accept: application/vnd.github.v3+json
+User-Agent: Axios
+X-GitHub-Api-Version: 2022-11-28
+
+
+
+
+### Get Tag
+@tag = {{$input GitHub Tag? $value: v1.0.0}}
+
+GET https://api.github.com/repos/{{owner}}/{{repo}}/git/ref/tags/{{tag}}
+Content-Type: application/json
+Authorization: token {{token}}
+Accept: application/vnd.github.v3+json
+User-Agent: Axios
+X-GitHub-Api-Version: 2022-11-28

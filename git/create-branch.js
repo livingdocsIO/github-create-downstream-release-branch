@@ -1,24 +1,37 @@
-const request = require('request-promise')
+'use strict'
+
+const axios = require('axios')
 
 // https://docs.github.com/en/rest/git/refs?apiVersion=2022-11-28#create-a-reference
-module.exports = async ({owner, repo, token, ref, sha}) => {
+module.exports = async ({owner, repo, token, ref, sha, debug}) => {
   try {
-    const response = await request({
-      method: 'POST',
-      uri: `https://api.github.com/repos/${owner}/${repo}/git/refs`,
-      body: {ref, sha},
-      headers: {
-        'Authorization': `token ${token}`,
-        'User-Agent': 'Request-Promise',
-        'X-GitHub-Api-Version': '2022-11-28'
-      },
-      json: true
-    })
-    return {
-      sha: response.object.sha
+    const {data} = await axios.post(
+      `https://api.github.com/repos/${owner}/${repo}/git/refs`,
+      {ref, sha},
+      {
+        headers: {
+          Authorization: `token ${token}`,
+          'User-Agent': 'Axios',
+          Accept: 'application/vnd.github.groot-preview+json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      }
+    )
+    if (debug) {
+      console.log('github-create-downstream-release-branch.create-branch()', data)
     }
+    return {sha: data.object.sha}
   } catch (error) {
-    console.log('github-create-downstream-relase-branch.create-branch: create release branch failed') // eslint-disable-line max-len
+    console.error(error.message)
+    console.error(error?.response?.data)
+    console.error(
+      'github-create-downstream-release-branch.create-branch: create release branch failed'
+    )
+    if (error?.response?.status === 422) {
+      console.error(
+        `Hint: You need to check "Do not require status checks on creation" for a release branch on the GitHub branch protection rules.`
+      )
+    }
     throw error
   }
 }

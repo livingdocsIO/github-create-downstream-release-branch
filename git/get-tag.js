@@ -1,4 +1,6 @@
-const request = require('request-promise')
+'use strict'
+
+const axios = require('axios')
 
 // https://docs.github.com/en/rest/git/refs?apiVersion=2022-11-28#get-a-reference
 //
@@ -13,25 +15,29 @@ const request = require('request-promise')
 //     url: 'https://api.github.com/repos/livingdocsIO/livingdocs-20min/git/commits/9f2f670944a82c9c7ad739461ead868377a86234'
 //   }
 // }
-module.exports = async ({owner, repo, token, tag}) => {
+module.exports = async ({owner, repo, token, tag, debug}) => {
   try {
-    const response = await request({
-      uri: `https://api.github.com/repos/${owner}/${repo}/git/ref/tags/${tag}`,
-      headers: {
-        'Accept': 'application/vnd.github.v3+json',
-        'Authorization': `token ${token}`,
-        'User-Agent': 'Request-Promise',
-        'X-GitHub-Api-Version': '2022-11-28'
-      },
-      json: true
-    })
+    const {data} = await axios.get(
+      `https://api.github.com/repos/${owner}/${repo}/git/ref/tags/${tag}`,
+      {
+        headers: {
+          Accept: 'application/vnd.github.v3+json',
+          Authorization: `token ${token}`,
+          'User-Agent': 'Axios',
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      }
+    )
+    if (debug) {
+      console.log('github-create-downstream-release-branch.get-tag()', data)
+    }
     return {
       tag: tag,
-      sha: response.object.sha
+      sha: data.object.sha
     }
-
   } catch (error) {
-    console.log('github-create-downstream-relase-branch.get-tag: failed')
+    console.error(error)
+    console.error('github-create-downstream-release-branch.get-tag: failed')
     throw error
   }
 }

@@ -1,4 +1,6 @@
-const request = require('request-promise')
+'use strict'
+
+const axios = require('axios')
 
 // https://docs.github.com/en/rest/reference/repos#list-repository-tags
 // https://api.github.com/repos/livingdocsio/livingdocs-server/tags?access_token=1234
@@ -13,22 +15,24 @@ const request = require('request-promise')
 //     }
 //   }
 // ]
-module.exports = async ({owner, repo, token, page = 1, perPage = 10}) => {
+module.exports = async ({owner, repo, token, page = 1, perPage = 10, debug}) => {
   try {
-    return await request({
-      uri: `https://api.github.com/repos/${owner}/${repo}/tags`,
-      qs: {page, per_page: perPage},
+    const {data} = await axios.get(`https://api.github.com/repos/${owner}/${repo}/tags`, {
+      params: {page, per_page: perPage},
       headers: {
-        'Accept': 'application/vnd.github.v3+json',
-        'Authorization': `token ${token}`,
-        'User-Agent': 'Request-Promise',
+        Accept: 'application/vnd.github.v3+json',
+        Authorization: `token ${token}`,
+        'User-Agent': 'Axios',
         'X-GitHub-Api-Version': '2022-11-28'
-      },
-      json: true
+      }
     })
-
+    if (debug) {
+      console.log('github-create-downstream-release-branch.get-tags()', data)
+    }
+    return data
   } catch (error) {
-    console.log('github-create-downstream-relase-branch.get-tags: failed')
+    console.error(error)
+    console.error('github-create-downstream-release-branch.get-tags: failed')
     throw error
   }
 }

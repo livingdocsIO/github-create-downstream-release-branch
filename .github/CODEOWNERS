@@ -1,0 +1,10 @@
+# info about codeowners - https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Enablement & Standards team owns this repository
+*        @livingdocsIO/enablement-standards
+
+# CODEOWNERS prevent renovate automerge since it will automatically ask for review
+# See documentation for more details: https://docs.renovatebot.com/automerge-configuration/
+# Solution: make files used by renovate owned by everyone
+/package.json
+/package-lock.json

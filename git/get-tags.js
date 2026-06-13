@@ -1,6 +1,7 @@
 'use strict'
 
 const axios = require('axios')
+const logGithubError = require('./log-github-error')
 
 // https://docs.github.com/en/rest/reference/repos#list-repository-tags
 // https://api.github.com/repos/livingdocsio/livingdocs-server/tags?access_token=1234
@@ -31,8 +32,11 @@ module.exports = async ({owner, repo, token, page = 1, perPage = 10, debug}) => 
     }
     return data
   } catch (error) {
-    console.error(error)
-    console.error('github-create-downstream-release-branch.get-tags: failed')
+    logGithubError(error, {
+      context: 'github-create-downstream-release-branch.get-tags',
+      owner,
+      repo
+    })
     throw error
   }
 }

@@ -1,6 +1,7 @@
 'use strict'
 
 const axios = require('axios')
+const logGithubError = require('./log-github-error')
 
 // https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#create-a-pull-request
 module.exports = async ({owner, repo, token, title, head, base, body, debug}) => {
@@ -20,8 +21,11 @@ module.exports = async ({owner, repo, token, title, head, base, body, debug}) =>
     if (debug) console.log('github-create-downstream-release-branch.create-pull-request()', data)
     return data
   } catch (error) {
-    console.error(error)
-    console.error('github-create-downstream-release-branch.create-pull-request: failed')
+    logGithubError(error, {
+      context: 'github-create-downstream-release-branch.create-pull-request',
+      owner,
+      repo
+    })
     throw error
   }
 }

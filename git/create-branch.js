@@ -1,6 +1,7 @@
 'use strict'
 
 const axios = require('axios')
+const logGithubError = require('./log-github-error')
 
 // https://docs.github.com/en/rest/git/refs?apiVersion=2022-11-28#create-a-reference
 module.exports = async ({owner, repo, token, ref, sha, debug}) => {
@@ -22,11 +23,11 @@ module.exports = async ({owner, repo, token, ref, sha, debug}) => {
     }
     return {sha: data.object.sha}
   } catch (error) {
-    console.error(error.message)
-    console.error(error?.response?.data)
-    console.error(
-      'github-create-downstream-release-branch.create-branch: create release branch failed'
-    )
+    logGithubError(error, {
+      context: 'github-create-downstream-release-branch.create-branch',
+      owner,
+      repo
+    })
     if (error?.response?.status === 422) {
       console.error(
         `Hint: You need to check "Do not require status checks on creation" for a release branch on the GitHub branch protection rules.`

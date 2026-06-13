@@ -1,6 +1,7 @@
 'use strict'
 
 const axios = require('axios')
+const logGithubError = require('./log-github-error')
 
 // https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#get-repository-content
 //
@@ -23,8 +24,11 @@ module.exports = async ({owner, repo, token, path, debug}) => {
     }
     return data
   } catch (error) {
-    console.error(error)
-    console.error('github-create-downstream-release-branch.get-content: failed')
+    logGithubError(error, {
+      context: 'github-create-downstream-release-branch.get-content',
+      owner,
+      repo
+    })
     throw error
   }
 }
